@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="other/element.css">
+    <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+<el-main id="app" v-cloak>
+    <div id="smsTemplated" class="antiTemplate"></div>
+    <div class="btnRow">
+        <el-button size="mini" @click="getAllData">查看模板数据</el-button>
+        <el-button size="mini" @click="dialogVisible = true">添加关键词</el-button>
+        <el-button size="mini" @click="clearData">清除数据（含缓存）</el-button>
+        <el-button size="mini" @click="disabled">禁用编辑框</el-button>
+        <el-button size="mini" @click="able">启用编辑框</el-button>
+        <el-button size="mini" @click="resetTemplate">渲染后台保存的数据</el-button>
+
+    </div>
+    <el-dialog
+        title="添加关键词"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <el-select v-model="selectValue">
+            <el-option
+                    v-for="(item,index) in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="index">
+            </el-option>
+        </el-select>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleDialogHide">确 定</el-button>
+        </span>
+    </el-dialog>
+</el-main>
+<script src="other/vue.js"></script>
+<script src="other/element.js"></script>
+<script src="keywordTemplate.js"></script>
+<script>
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            textarea:'',
+            textareaValue:'',
+            selectValue:'',
+            dialogVisible:false,
+            options: [
+                {value: '选项1',label: '黄金糕'},
+                {value: '选项2', label: '双皮奶', disabled: true},
+                {value: '选项3', label: '蚵仔煎'},
+                {value: '选项4', label: '龙须面'},
+                {value: '选项5', label: '北京烤鸭'}
+                ],
+        },
+        mounted(){
+            this.textarea = new AntiTemplate('#smsTemplated');
+        },
+        methods:{
+            //添加数据
+            handleDialogHide(){
+                this.textarea.addKeyword({
+                    //必须要有keyword属性
+                    keyword:vm.options[vm.selectValue].label,
+                    data:vm.options[vm.selectValue]
+                });
+                this.dialogVisible = false;
+            },
+            //获取所有数据
+            getAllData(){
+               var data = this.textarea.getAllData();
+               console.log(data)
+            },
+            //清除数据
+            clearData(){
+                this.textarea.clear()
+            },
+            //禁用
+            disabled(){
+                this.textarea.disabled()
+            },
+            //启用
+            able(){
+                this.textarea.able()
+            },
+            //渲染后台保存的数据
+            resetTemplate(){
+                this.textarea.resetTemplate('你好棒{{黄金糕}}',[{value: '选项1',label: '黄金糕'}])
+            }
+        }
+    })
+
+</script>
+</body>
+</html>

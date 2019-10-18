@@ -1,0 +1,39 @@
+
+[v-cloak]{
+    display: none;
+}
+*{
+    border:0;
+    box-sizing: border-box;
+}
+body,html,.el-main{
+    width: 100%;
+    height: 100%;
+}
+.el-main{
+    background: lightpink;
+}
+
+/*输入框样式*/
+.antiTemplate{
+    border-radius: 3px;
+    width: 500px;
+    border: 1px #ccc solid;
+    height: 150px;
+    padding: 2px;
+    overflow: auto;
+    margin: 50px auto;
+    background: #fff;
+}
+/*关键词样式*/
+.editInput{
+    background: #efefef;
+    border: 0;
+    vertical-align: unset;
+    text-align: center
+}
+.btnRow{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
