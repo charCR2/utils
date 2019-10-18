@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="session.js"></script>
+<script>
+    var session = new SessionS('index');
+    // var params = {
+    //     name:'carter',
+    //     age:'24',
+    //     gender:'female'
+    // };
+    // session.set('searchData',params);
+    // var res = session.get('searchData');
+    // console.log(res) //params = {name:'carter',age:'24',gender:'female'}
+    // session.remove('searchData');
+    // console.log(session.get('searchData')); //null
+
+
+    session.set('name','carter');
+    session.set('age','24');
+    session.set('family',{father:'father',mather:'mather'})
+    var res = session.getAll();
+    console.log(res);
+
+    session.clear();
+    console.log(session.getAll())
+    //需要清除所有的话直接调用sessionStorage
+</script>
+</body>
+</html>
