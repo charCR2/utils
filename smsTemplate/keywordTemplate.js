@@ -29,6 +29,19 @@
                 return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
             },
 
+            getLength :function(str) {
+            ///<summary>获得字符串实际长度，中文2，英文1</summary>
+            var realLength = 0, len = str.length, charCode = -1;
+            for (var i = 0; i < len; i++) {
+                charCode = str.charCodeAt(i);
+                if (charCode >= 0 && charCode <= 128)
+                    realLength += 1;
+                else
+                    realLength += 2;
+            }
+            return realLength;
+
+        },
             deepClone:function(data){
                 let type = getType(data) , obj;
                 if(type === 'Array'){
@@ -57,7 +70,8 @@
                     class:this.obj.className,
                     id:this.obj.id,
                     contenteditable:true,
-                    style:this.obj.style.cssText
+                    style:this.obj.style.cssText,
+
                 })
                 ,this.obj);
             this.edit = document.querySelector(id);
@@ -67,6 +81,7 @@
 
         AntiTemplate.prototype = Object.assign(new Util(),{
             constructor: AntiTemplate,
+
             init:function () {
                 this.editEvent(this.edit,this)
             },
@@ -91,38 +106,74 @@
                     var selection = getSelection();
                     // 设置最后光标对象
                     that.lastEditRange = selection.getRangeAt(0)
+                };
+                edit.onpaste = function (e) {
+                    var text = document.createTextNode(e.clipboardData.getData('text/plain'));
+                    var selection = getSelection()
+                    if (this.lastEditRange) {
+                        // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+                        selection.removeAllRanges();
+                        selection.addRange(this.lastEditRange)
+                    }
+                    var rang = selection.getRangeAt(0);
+                    // 文本节点在光标位置处插入新的表情内容
+                    rang.insertNode(text);
+                    // 光标移动到到原来的位置加上新内容的长度
+                    rang.setStartAfter(text);
+                    selection.removeAllRanges();
+                    // 插入新的光标对象
+                    selection.addRange(rang);
+                    // 无论如何都要记录最后光标对象
+                    this.lastEditRange = selection.getRangeAt(0);
+                    return false
                 }
             },
 
             resetTemplate:function(text,valList){
                 var that = this;
+                var re = text.split('\n');
+                var m = 0;
+                var arr = [];
 
-                var a=[],b=[],c=this.deepClone(valList);
-                var reg = text.split("{{");
-                this.edit.innerHTML=reg[0];
-                reg.shift();
-                reg.forEach(function (item) {
-                    var arr = item.split("}}");
-                    a.push(arr[1]);
-                    b.push(arr[0]);
-                });
-                if(c.length<=0){
-                    this.edit.innerHTML =text
-                }
-                c.forEach(function (item,i) {
-                    var myText = document.createTextNode(a[i]);
-                    var emojiText = document.createElement('input');
-                    item.guid = that.guid();
-                    emojiText.setAttribute("data-id",item.guid);
-                    emojiText.setAttribute("disabled",false);
-                    emojiText.className = "editInput";
-                    emojiText.style.width =(20+(b[i].length*14)) + 'px';
-                    emojiText.value = "{{"+b[i]+"}}";
-                    that.edit.appendChild(emojiText);
-                    that.edit.appendChild(myText);
-                });
+                re.forEach(function (val,i) {
+                    var edit = document.createElement('div');
+                    var reg = val.split("{{");
+                    var c = that.deepClone(valList).splice(m,reg.length-1);
+                    var a=[],b=[];
+                    m += reg.length - 1;
+                    edit.innerHTML=reg[0];
+                    reg.shift();
+                    reg.forEach(function (item) {
+                        var arr = item.split("}}");
+                        a.push(arr[1]);
+                        b.push(arr[0]);
+                    });
+                    if(c.length<=0){
+                        edit.innerHTML =val
+                    }
+                    c.forEach(function (item,i) {
+                        var myText = document.createTextNode(a[i]);
+                        var emojiText = document.createElement('input');
+                        item.guid = that.guid();
+                        emojiText.setAttribute("data-id",item.guid);
+                        emojiText.setAttribute("disabled",false);
+                        emojiText.className = "editInput";
+                        var len = (22+(that.getLength(b[i])*7)) + 'px';
+                        emojiText.style.width =len;
+                        // emojiText.value = ;
+                        emojiText.setAttribute('value',"{{"+b[i]+"}}") //解决换行value消失问题
+                        edit.appendChild(emojiText);
+                        edit.appendChild(myText);
+                    });
+                    arr = arr.concat(c)
+                    if(i===0){
+                        that.edit.innerHTML = edit.innerHTML
+                    }else {
+                        that.edit.appendChild(edit)
+                    }
 
-            this.keywordList = c
+                });
+            this.keywordList = arr
         },
 
         // 添加关键词
@@ -141,7 +192,9 @@
                 emojiText.setAttribute("data-id",attr.guid);
                 emojiText.setAttribute("disabled",false);
                 emojiText.className = "editInput";
-                emojiText.style.width =(20+(attr.keyword.length*14)) + 'px';
+            var len = (22+(that.getLength(attr.keyword)*7)) + 'px';
+
+            emojiText.style.width =len;
                 emojiText.value = val;
                 if (this.lastEditRange) {
                     // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
@@ -161,11 +214,16 @@
         },
         //获取所有数据
         getAllData:function(){
+            var obj = this.resetGet(this.edit,'',[],0);
+            return this.deepClone({
+                text:obj.str,
+                data:obj.arr
+            })
+        },
+
+        resetGet:function(edit,str,arr,m){
             var that = this;
-            var str = "";
-            var arr = [];
-            var m = 0;
-            this.edit.childNodes.forEach(function(item){
+            edit.childNodes.forEach(function(item){
                 if(item.nodeName.toLowerCase()==="input"){
                     str += item.value;
                     that.keywordList.forEach(function(val){
@@ -174,15 +232,23 @@
                         }
                     });
                     arr[m].index= m++;
-                }else{
+                }else if(item.nodeName.toLowerCase()==="div"){
+                    str += '\n';
+                    var obj = that.resetGet(item,str,arr,m);
+                    str=obj.str;
+                    arr=obj.arr;
+                    m=obj.m
+                }else if(item.nodeName.toLowerCase()==="#text"){
                     str += item.nodeValue;
                 }
             });
-            return this.deepClone({
-                text:str,
-                data:arr
-            })
+            return {
+                str:str,
+                arr:arr,
+                m:m
+            }
         },
+
         //清除数据
         clear:function () {
             this.keywordList=[];
@@ -193,13 +259,12 @@
             this.edit.style.background = '#eee'
         },
         able:function () {
-            this.edit.setAttribute('contenteditable',true)
+            this.edit.setAttribute('contenteditable',true);
             this.edit.style.background = '#fff'
         },
 
     });
     //出口
     window.AntiTemplate = AntiTemplate
-
  }
  ));
