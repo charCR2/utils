@@ -22,12 +22,17 @@
 
     session.set('name','carter');
     session.set('age','24');
-    session.set('family',{father:'father',mather:'mather'})
+    session.set('family',{father:'father',mather:'mather',child:[{
+        a:1,b:2
+    }]})
     var res = session.getAll();
-    console.log(res);
-
-    session.clear();
+    // console.log(res);
+    console.log(session.get('family',"666"));
+    session.set('family.child[0w].c', 3)
+ 
     console.log(session.getAll())
+
+    // session.clear();
     //需要清除所有的话直接调用sessionStorage
 </script>
 </body>
