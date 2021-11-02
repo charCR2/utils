@@ -1,10 +1,13 @@
 ## Git 基础
-<a href="#title1"> 获取 Git 仓库</a>
-<a href="#title1"> 获取 Git 仓库</a>
-<a href="#title1"> 获取 Git 仓库</a>
-<a href="#title1"> 获取 Git 仓库</a>
-<a href="#title1"> 获取 Git 仓库</a>
-<a href="#title1"> 获取 Git 仓库</a>
+<a href="#title1"> 获取 Git 仓库</a><br/>
+<a href="#title2"> 记录每次更新到仓库</a><br/><br/>
+<a href="#title3"> 查看提交历史</a><br/>
+<a href="#title4"> 撤消操作</a><br/>
+<a href="#title5"> 远程仓库的使用</a><br/><br/>
+<a href="#title6"> 打标签</a><br/>
+<a href="#title7"> Git 别名</a><br/>
+<a href="#title8"> 总结</a><br/>
+
 ### <span id="title1">获取 Git 仓库</span>
 
 有两种取得 Git 项目仓库的方法。 第一种是在现有项目或目录下导入所有文件到 Git 中； 第二种是从一个服务器克隆一个现有的 Git 仓库。
@@ -1016,7 +1019,7 @@ $ git remote
 origin
 ```
 
-### 打标签
+### <span id="title6">打标签</span>
 
 像其他版本控制系统（VCS）一样，Git 可以给历史中的某一个提交打上标签，以示重要。 比较有代表性的是人们会使用这个功能来标记发布结点（v1.0 等等）。 在本节中，你将会学习如何列出已有的标签、如何创建新标签、以及不同类型的标签分别是什么。
 
@@ -1203,7 +1206,7 @@ Switched to a new branch 'version2'
 
 当然，如果在这之后又进行了一次提交，`version2` 分支会因为改动向前移动了，那么 `version2` 分支就会和 `v2.0.0` 标签稍微有些不同，这时就应该当心了。
 
-### Git 别名
+### <span id="title7">Git 别名</span>
 
 在我们结束本章 Git 基础之前，正好有一个小技巧可以使你的 Git 体验更简单、容易、熟悉：别名。 我们不会在之后的章节中引用到或假定你使用过它们，但是你大概应该知道如何使用它们。
 
@@ -1256,6 +1259,6 @@ Date:   Tue Aug 26 19:48:51 2008 +0800
 $ git config --global alias.visual '!gitk'
 ```
 
-### 总结
+### <span id="title8">总结</span>
 
 现在，你可以完成所有基本的 Git 本地操作－创建或者克隆一个仓库、做更改、暂存并提交这些更改、浏览你的仓库从创建到现在的所有更改的历史。 下一步，本书将介绍 Git 的杀手级特性：分支模型。
