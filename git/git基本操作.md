@@ -1,9 +1,9 @@
 ## Git 基础
 <a href="#title1"> 获取 Git 仓库</a><br/>
-<a href="#title2"> 记录每次更新到仓库</a><br/><br/>
+<a href="#title2"> 记录每次更新到仓库</a><br/>
 <a href="#title3"> 查看提交历史</a><br/>
 <a href="#title4"> 撤消操作</a><br/>
-<a href="#title5"> 远程仓库的使用</a><br/><br/>
+<a href="#title5"> 远程仓库的使用</a><br/>
 <a href="#title6"> 打标签</a><br/>
 <a href="#title7"> Git 别名</a><br/>
 <a href="#title8"> 总结</a><br/>
